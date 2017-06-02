@@ -8,6 +8,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
+
+import com.dsa.chat.ChatType;
+import com.dsa.contacts.AppContacts;
+import com.dsa.model.AppContact;
+
+import java.util.List;
 
 public class ContactsActivity extends AppCompatActivity {
 
@@ -24,6 +32,23 @@ public class ContactsActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent contactAddActivityIntent = new Intent(getApplicationContext(), ContactsAddActivity.class);
                 startActivity(contactAddActivityIntent);
+            }
+        });
+
+        final AppContacts appContacts=new AppContacts(this);
+        ContactsItemAdapter contactsItemAdapter=new ContactsItemAdapter(this, appContacts.getMyContacts());
+        ListView contactsListView = (ListView)findViewById(R.id.contactsListView);
+        contactsListView.setAdapter(contactsItemAdapter);
+
+        contactsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                AppContact contact=appContacts.getMyContacts().get(position);
+                Intent messageIntent=new Intent(getApplicationContext(), MessageActivity.class);
+                messageIntent.putExtra(IntentExtra.MSG_TYPE, ChatType.CONTACT);
+                messageIntent.putExtra(IntentExtra.MSG_TO_UID, contact.getUid());
+                messageIntent.putExtra(IntentExtra.MSG_TO_NAME, contact.getDisplayName());
+                startActivity(messageIntent);
             }
         });
 

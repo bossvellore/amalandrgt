@@ -30,7 +30,14 @@
             android:name=".ContactsActivity"
             android:label="@string/title_activity_contacts"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".ContactsAddActivity"></activity>
+        <activity android:name=".ContactsAddActivity" />
+
+        <service
+            android:name=".ContactsRequestService"
+            android:enabled="true"
+            android:exported="false" />
+
+        <activity android:name=".MessageActivity"></activity>
     </application>
 
 </manifest>

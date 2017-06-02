@@ -82,7 +82,7 @@ public class AuthFireBase implements GoogleApiClient.OnConnectionFailedListener{
                 firebaseAuthWithGoogle(account);
             } else {
                 authFireBaseListener.onAuthFireBaseFailure();
-                //Log.d(TAG, result.getStatus().toString());
+                //Log.d(TAG, result.getMyStatus().toString());
                 //signupWithGoogleBtn.setVisibility(View.VISIBLE);
                 //mProgress.setVisibility(View.INVISIBLE);
                 //Toast.makeText(SignupActivity.this, " Google Signup failed.",

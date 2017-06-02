@@ -7,6 +7,10 @@
             android:icon="@drawable/ic_menu_slideshow"
             android:title="Contacts" />
         <item
+            android:id="@+id/nav_app_chats"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="Chats" />
+        <item
             android:id="@+id/nav_camera"
             android:icon="@drawable/ic_menu_camera"
             android:title="Import" />
