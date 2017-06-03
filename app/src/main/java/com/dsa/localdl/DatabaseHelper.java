@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 
 public class DatabaseHelper extends SQLiteOpenHelper {
-    public static final int DATABASE_VERSION = 2;
+    public static final int DATABASE_VERSION = 3;
     public static final String DATABASE_NAME = "gt.db";
 
     private static final String SQL_CREATE_ENTRIES =
@@ -22,11 +22,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     AppDatabaseContract.ContactsTable.COL_OTHER_STATUS +" TEXT);";
 
     private static final String SQL_CREATE_MESSAGES =
-            "CREATE TABLE" + AppDatabaseContract.MessageTable.TABLE_NAME + " (" +
+            "CREATE TABLE " + AppDatabaseContract.MessageTable.TABLE_NAME + " (" +
                     AppDatabaseContract.MessageTable.COL_KEY + " TEXT NULL," +
-                    AppDatabaseContract.MessageTable.COL_CONTACT_UID + " TEXT" +
-                    AppDatabaseContract.MessageTable.COL_MAIL_BOX + " TEXT" +
-                    AppDatabaseContract.MessageTable.COL_TEXT + " TEXT" +
+                    AppDatabaseContract.MessageTable.COL_CONTACT_UID + " TEXT," +
+                    AppDatabaseContract.MessageTable.COL_MAIL_BOX + " TEXT," +
+                    AppDatabaseContract.MessageTable.COL_MSG_TEXT + " TEXT," +
                     AppDatabaseContract.MessageTable.COL_TIME_STAMP + " TEXT);";
 
     public DatabaseHelper(Context context)
@@ -37,15 +37,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SQL_CREATE_ENTRIES);
+        db.execSQL(SQL_CREATE_MESSAGES);
 
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-        if(oldVersion == 1 && newVersion == 2)
-        {
-            db.execSQL(SQL_CREATE_MESSAGES);
-        }
+
     }
 }

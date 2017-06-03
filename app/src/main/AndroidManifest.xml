@@ -37,7 +37,12 @@
             android:enabled="true"
             android:exported="false" />
 
-        <activity android:name=".MessageActivity"></activity>
+        <activity android:name=".MessageActivity" />
+
+        <service
+            android:name=".MessageService"
+            android:enabled="true"
+            android:exported="false"></service>
     </application>
 
 </manifest>

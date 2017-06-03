@@ -54,5 +54,9 @@ public class MessageRDB {
     }
 
 
+    public DatabaseReference getMyInboxReference()
+    {
+        return reference.child(currentUser.getUid());
+    }
 
 }

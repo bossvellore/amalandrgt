@@ -40,8 +40,7 @@ public class ContactsRequestService extends Service {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 AppContact otherContact=dataSnapshot.getValue(AppContact.class);
                 appContacts.receiveContactRequest(otherContact);
-
-                postNotif(dataSnapshot.getValue().toString());
+                postNotif(otherContact.getDisplayName());
             }
 
             @Override
@@ -75,7 +74,7 @@ public class ContactsRequestService extends Service {
 
 //		notification.flags |= Notification.FLAG_AUTO_CANCEL;
 
-        CharSequence contentTitle = "Background" + Math.random();
+        CharSequence contentTitle = "Contact Request" + Math.random();
         Intent notificationIntent = new Intent(context, ContactsActivity.class);
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
         Notification notification= new Notification.Builder(context)

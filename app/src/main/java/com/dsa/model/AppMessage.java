@@ -2,15 +2,13 @@ package com.dsa.model;
 
 import com.dsa.chat.MailBox;
 
-import java.sql.Timestamp;
-
 /**
  * Created by amalroshand on 02/06/17.
  */
 
 public class AppMessage {
     private String key;
-    private String text;
+    private String msgText;
     private String contactUid;
     private MailBox mailBox;
     private String timestamp;
@@ -23,12 +21,12 @@ public class AppMessage {
         this.key = key;
     }
 
-    public String getText() {
-        return text;
+    public String getMsgText() {
+        return msgText;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setMsgText(String text) {
+        this.msgText = text;
     }
 
     public String getContactUid() {
