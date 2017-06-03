@@ -45,7 +45,7 @@ public class ContactsActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 AppContact contact=appContacts.getMyContacts().get(position);
                 Intent messageIntent=new Intent(getApplicationContext(), MessageActivity.class);
-                messageIntent.putExtra(IntentExtra.MSG_TYPE, ChatType.CONTACT);
+                messageIntent.putExtra(IntentExtra.MSG_TYPE, ChatType.CONTACT.toString());
                 messageIntent.putExtra(IntentExtra.MSG_TO_UID, contact.getUid());
                 messageIntent.putExtra(IntentExtra.MSG_TO_NAME, contact.getDisplayName());
                 startActivity(messageIntent);

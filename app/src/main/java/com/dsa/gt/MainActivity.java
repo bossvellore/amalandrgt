@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         startService(new Intent(this, ContactsRequestService.class));
+        startService(new Intent(this, MessageService.class));
     }
 
     @Override
