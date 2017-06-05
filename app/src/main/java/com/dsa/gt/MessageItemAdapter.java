@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.dsa.chat.MailBox;
 import com.dsa.model.AppMessage;
 
 import java.util.List;
@@ -43,9 +44,18 @@ public class MessageItemAdapter extends BaseAdapter {
         View view = convertView; // re-use an existing view, if one is available
         if (view == null) // otherwise create a new one
             view = activity.getLayoutInflater().inflate(R.layout.adapter_message_item, null);
-        AppMessage appContact=items.get(position);
-        TextView displayNameTextView = (TextView)view.findViewById(R.id.messageTextView);
-        displayNameTextView.setText(appContact.getMsgText());
+
+        AppMessage message=items.get(position);
+        TextView displayNameTextView = (TextView) view.findViewById(R.id.messageTextView);
+        TextView messageDateTextView = (TextView) view.findViewById(R.id.messageDateTextView);
+        if(message.getMailBox() == MailBox.IN) {
+            displayNameTextView.setBackgroundColor(view.getResources().getColor(R.color.colorIncomingMessage));
+            messageDateTextView.setBackgroundColor(view.getResources().getColor(R.color.colorIncomingMessage));
+        }
+        displayNameTextView.setText(message.getMsgText());
+        long timeStamp = Long.valueOf(message.getTimestamp().toString());
+        String date = DateHelper.dateFormat.format(timeStamp);
+        messageDateTextView.setText(date);
         return view;
     }
 }

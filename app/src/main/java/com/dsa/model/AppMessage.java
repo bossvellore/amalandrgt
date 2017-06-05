@@ -2,6 +2,8 @@ package com.dsa.model;
 
 import com.dsa.chat.MailBox;
 
+import java.util.Map;
+
 /**
  * Created by amalroshand on 02/06/17.
  */
@@ -11,7 +13,8 @@ public class AppMessage {
     private String msgText;
     private String contactUid;
     private MailBox mailBox;
-    private String timestamp;
+    private Object timestamp;
+    //private Map<String,String> timestamp;
 
     public String getKey() {
         return key;
@@ -45,11 +48,11 @@ public class AppMessage {
         this.mailBox = mailBox;
     }
 
-    public String getTimestamp() {
+    public Object getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(String timestamp) {
+    public void setTimestamp(Object timestamp) {
         this.timestamp = timestamp;
     }
 }

@@ -6,6 +6,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 
 /**
  * Created by amalroshand on 01/06/17.
@@ -38,13 +39,8 @@ public class MessageRDB {
      * save the contact to my contact list
      * @param message
      */
-    public void send(AppMessage message)
+    public void send(AppMessage message, String messageContact)
     {
-        // getting delivery contact
-        String messageContact=message.getContactUid();
-        // set the sender contact
-        message.setContactUid(currentUser.getUid());
-
         reference.child(messageContact).push().setValue(message);
     }
 

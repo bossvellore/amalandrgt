@@ -25,8 +25,8 @@ public class MessageActivity extends AppCompatActivity implements ChatListener {
     String chatType;
     ListView messageListView;
     MessageItemAdapter messageItemAdapter;
-    SimpleDateFormat dateF = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
-    SimpleDateFormat timeF = new SimpleDateFormat("HH:mm", Locale.getDefault());
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,10 +51,9 @@ public class MessageActivity extends AppCompatActivity implements ChatListener {
             public void onClick(View v) {
                 AppMessage message=new AppMessage();
                 message.setContactUid(contactUid);
-                message.setMailBox(MailBox.OUT);
+
                 message.setMsgText(messageEditTxt.getText().toString());
-                String date = dateF.format(Calendar.getInstance().getTime());
-                message.setTimestamp(date);
+
                 chatManager.send(message);
             }
         });

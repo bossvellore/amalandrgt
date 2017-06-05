@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.dsa.chat.MailBox;
 import com.dsa.model.AppContact;
 import com.dsa.model.AppMessage;
 
@@ -38,6 +39,24 @@ public class MessageLDB extends DatabaseHelper{
     public List<AppMessage> getMessagesFrom(String contactUid)
     {
         List<AppMessage> messageList=new ArrayList<AppMessage>();
+
+        String selectQuery = "SELECT * FROM "+AppDatabaseContract.MessageTable.TABLE_NAME+
+                " WHERE "+ AppDatabaseContract.MessageTable.COL_CONTACT_UID+" ='"+contactUid+"'" +
+                "ORDER BY "+ AppDatabaseContract.MessageTable.COL_TIME_STAMP+" DESC";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                AppMessage message = new AppMessage();
+                message.setContactUid(cursor.getString(cursor.getColumnIndex(AppDatabaseContract.MessageTable.COL_CONTACT_UID)));
+                message.setMailBox(MailBox.valueOf(cursor.getString(cursor.getColumnIndex(AppDatabaseContract.MessageTable.COL_MAIL_BOX))));
+                message.setMsgText(cursor.getString(cursor.getColumnIndex(AppDatabaseContract.MessageTable.COL_MSG_TEXT)));
+                message.setTimestamp(cursor.getString(cursor.getColumnIndex(AppDatabaseContract.MessageTable.COL_TIME_STAMP)));
+                messageList.add(message);
+            } while (cursor.moveToNext());
+        }
+
         return messageList;
     }
 
