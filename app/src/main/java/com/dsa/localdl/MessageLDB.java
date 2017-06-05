@@ -36,28 +36,83 @@ public class MessageLDB extends DatabaseHelper{
         db.insert(AppDatabaseContract.MessageTable.TABLE_NAME, null, values);
     }
 
+    public void update(AppMessage message)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        // Create a new map of values, where column names are the keys
+        ContentValues values = new ContentValues();
+        //values.put(AppDatabaseContract.MessageTable.COL_KEY, message.getKey());
+        values.put(AppDatabaseContract.MessageTable.COL_CONTACT_UID, message.getContactUid());
+        values.put(AppDatabaseContract.MessageTable.COL_MAIL_BOX, message.getMailBox().toString());
+        values.put(AppDatabaseContract.MessageTable.COL_MSG_TEXT, message.getMsgText().toString());
+        values.put(AppDatabaseContract.MessageTable.COL_TIME_STAMP, message.getTimestamp().toString());
+        // Insert the new row, returning the primary key value of the new row
+        db.update(AppDatabaseContract.MessageTable.TABLE_NAME, values,
+                AppDatabaseContract.MessageTable.COL_KEY+"=?", new String[]{message.getKey()});
+    }
+
+    public boolean exists(String key)
+    {
+        String[] columns=new String[]{
+                AppDatabaseContract.MessageTable.COL_KEY
+        };
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(AppDatabaseContract.MessageTable.TABLE_NAME,columns,
+                AppDatabaseContract.MessageTable.COL_KEY + "=?", new String[]{key}, null, null, null );
+        if(cursor.getCount()>0){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+    public AppMessage getLastMessage()
+    {
+        String[] columns=new String[]{
+                AppDatabaseContract.MessageTable.COL_KEY,
+                AppDatabaseContract.MessageTable.COL_MSG_TEXT,
+                AppDatabaseContract.MessageTable.COL_MAIL_BOX,
+                AppDatabaseContract.MessageTable.COL_CONTACT_UID,
+                AppDatabaseContract.MessageTable.COL_TIME_STAMP
+        };
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(AppDatabaseContract.MessageTable.TABLE_NAME,columns,null,null,null,null, AppDatabaseContract.MessageTable.COL_TIME_STAMP + " DESC","1");
+        if(cursor.moveToFirst()) {
+            return readCursor(cursor);
+        }else{
+            return null;
+        }
+
+    }
     public List<AppMessage> getMessagesFrom(String contactUid)
     {
         List<AppMessage> messageList=new ArrayList<AppMessage>();
 
         String selectQuery = "SELECT * FROM "+AppDatabaseContract.MessageTable.TABLE_NAME+
                 " WHERE "+ AppDatabaseContract.MessageTable.COL_CONTACT_UID+" ='"+contactUid+"'" +
-                "ORDER BY "+ AppDatabaseContract.MessageTable.COL_TIME_STAMP+" DESC";
+                "ORDER BY "+ AppDatabaseContract.MessageTable.COL_TIME_STAMP+" ASC";
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
+
         if (cursor.moveToFirst()) {
             do {
-                AppMessage message = new AppMessage();
-                message.setContactUid(cursor.getString(cursor.getColumnIndex(AppDatabaseContract.MessageTable.COL_CONTACT_UID)));
-                message.setMailBox(MailBox.valueOf(cursor.getString(cursor.getColumnIndex(AppDatabaseContract.MessageTable.COL_MAIL_BOX))));
-                message.setMsgText(cursor.getString(cursor.getColumnIndex(AppDatabaseContract.MessageTable.COL_MSG_TEXT)));
-                message.setTimestamp(cursor.getString(cursor.getColumnIndex(AppDatabaseContract.MessageTable.COL_TIME_STAMP)));
-                messageList.add(message);
+                messageList.add(readCursor(cursor));
             } while (cursor.moveToNext());
         }
 
         return messageList;
+    }
+
+    private AppMessage readCursor(Cursor cursor)
+    {
+        AppMessage message = new AppMessage();
+        message.setKey(cursor.getString(cursor.getColumnIndex(AppDatabaseContract.MessageTable.COL_KEY)));
+        message.setContactUid(cursor.getString(cursor.getColumnIndex(AppDatabaseContract.MessageTable.COL_CONTACT_UID)));
+        message.setMailBox(MailBox.valueOf(cursor.getString(cursor.getColumnIndex(AppDatabaseContract.MessageTable.COL_MAIL_BOX))));
+        message.setMsgText(cursor.getString(cursor.getColumnIndex(AppDatabaseContract.MessageTable.COL_MSG_TEXT)));
+        message.setTimestamp(cursor.getString(cursor.getColumnIndex(AppDatabaseContract.MessageTable.COL_TIME_STAMP)));
+        return message;
     }
 
     public List<AppContact> all() {

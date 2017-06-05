@@ -39,10 +39,12 @@ public class MessageService extends Service {
         super.onCreate();
         localBroadcastManager=LocalBroadcastManager.getInstance(getApplicationContext());
         messageLDB=new MessageLDB(getApplicationContext());
+        AppMessage lastMessage=messageLDB.getLastMessage();
         messageChildEventListener=new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 message = dataSnapshot.getValue(AppMessage.class);
+                message.setKey(dataSnapshot.getKey());
                 saveToLocalDB(message);
             }
 
@@ -66,18 +68,25 @@ public class MessageService extends Service {
 
             }
         };
-
-        reference.addChildEventListener(messageChildEventListener);
+        if(lastMessage != null) {
+            reference.orderByChild("timestamp")
+                    .startAt(Long.valueOf(lastMessage.getTimestamp().toString()) + 1)
+                    .addChildEventListener(messageChildEventListener);
+        }else{
+            reference.addChildEventListener(messageChildEventListener);
+        }
     }
 
     private void saveToLocalDB(AppMessage message)
     {
         message.setMailBox(MailBox.IN);
-        //long timeStamp = Long.valueOf(message.getTimestamp().toString());
-        //String date = DateHelper.dateFormat.format(timeStamp);
-        //message.setTimestamp(date);
-        messageLDB.insert(message);
-        notifyApp(message);
+        if(!messageLDB.exists(message.getKey())) {
+            messageLDB.insert(message);
+            MessageRDB.getInstance().delete(message.getKey());
+            notifyApp(message);
+        }else{
+            MessageRDB.getInstance().delete(message.getKey());
+        }
     }
 
     private void notifyApp(AppMessage message)

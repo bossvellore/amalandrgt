@@ -44,9 +44,9 @@ public class MessageRDB {
         reference.child(messageContact).push().setValue(message);
     }
 
-    public void delete(String uid)
+    public void delete(String key)
     {
-        reference.child(uid).removeValue();
+        reference.child(currentUser.getUid()).child(key).removeValue();
     }
 
 
