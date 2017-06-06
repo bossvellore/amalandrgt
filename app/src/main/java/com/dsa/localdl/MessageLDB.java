@@ -31,7 +31,7 @@ public class MessageLDB extends DatabaseHelper{
         values.put(AppDatabaseContract.MessageTable.COL_CONTACT_UID, message.getContactUid());
         values.put(AppDatabaseContract.MessageTable.COL_MAIL_BOX, message.getMailBox().toString());
         values.put(AppDatabaseContract.MessageTable.COL_MSG_TEXT, message.getMsgText().toString());
-        values.put(AppDatabaseContract.MessageTable.COL_TIME_STAMP, message.getTimestamp().toString());
+        values.put(AppDatabaseContract.MessageTable.COL_TIME_STAMP, message.getTimeStamp().toString());
         // Insert the new row, returning the primary key value of the new row
         db.insert(AppDatabaseContract.MessageTable.TABLE_NAME, null, values);
     }
@@ -45,7 +45,7 @@ public class MessageLDB extends DatabaseHelper{
         values.put(AppDatabaseContract.MessageTable.COL_CONTACT_UID, message.getContactUid());
         values.put(AppDatabaseContract.MessageTable.COL_MAIL_BOX, message.getMailBox().toString());
         values.put(AppDatabaseContract.MessageTable.COL_MSG_TEXT, message.getMsgText().toString());
-        values.put(AppDatabaseContract.MessageTable.COL_TIME_STAMP, message.getTimestamp().toString());
+        values.put(AppDatabaseContract.MessageTable.COL_TIME_STAMP, message.getTimeStamp().toString());
         // Insert the new row, returning the primary key value of the new row
         db.update(AppDatabaseContract.MessageTable.TABLE_NAME, values,
                 AppDatabaseContract.MessageTable.COL_KEY+"=?", new String[]{message.getKey()});
@@ -66,6 +66,7 @@ public class MessageLDB extends DatabaseHelper{
             return false;
         }
     }
+
     public AppMessage getLastMessage()
     {
         String[] columns=new String[]{
@@ -111,7 +112,7 @@ public class MessageLDB extends DatabaseHelper{
         message.setContactUid(cursor.getString(cursor.getColumnIndex(AppDatabaseContract.MessageTable.COL_CONTACT_UID)));
         message.setMailBox(MailBox.valueOf(cursor.getString(cursor.getColumnIndex(AppDatabaseContract.MessageTable.COL_MAIL_BOX))));
         message.setMsgText(cursor.getString(cursor.getColumnIndex(AppDatabaseContract.MessageTable.COL_MSG_TEXT)));
-        message.setTimestamp(cursor.getString(cursor.getColumnIndex(AppDatabaseContract.MessageTable.COL_TIME_STAMP)));
+        message.setTimeStamp(cursor.getString(cursor.getColumnIndex(AppDatabaseContract.MessageTable.COL_TIME_STAMP)));
         return message;
     }
 

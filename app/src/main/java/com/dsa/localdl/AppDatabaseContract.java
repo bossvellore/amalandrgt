@@ -17,6 +17,7 @@ public final class AppDatabaseContract {
         public static final String COL_PHOTO_URL = "photoUrl";
         public static final String COL_MY_STATUS = "myStatus";
         public static final String COL_OTHER_STATUS = "otherStatus";
+        public static final String COL_TIME_STAMP = "timeStamp";
     }
 
     public static class MessageTable implements BaseColumns{

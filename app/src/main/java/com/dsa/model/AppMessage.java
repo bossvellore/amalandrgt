@@ -9,11 +9,13 @@ import java.util.Map;
  */
 
 public class AppMessage {
+    public static final String REFERENCE="messages";
+    public static final String CHILD_TIME_STAMP="timeStamp";
     private String key;
     private String msgText;
     private String contactUid;
     private MailBox mailBox;
-    private Object timestamp;
+    private Object timeStamp;
     //private Map<String,String> timestamp;
 
     public String getKey() {
@@ -48,11 +50,11 @@ public class AppMessage {
         this.mailBox = mailBox;
     }
 
-    public Object getTimestamp() {
-        return timestamp;
+    public Object getTimeStamp() {
+        return timeStamp;
     }
 
-    public void setTimestamp(Object timestamp) {
-        this.timestamp = timestamp;
+    public void setTimeStamp(Object timeStamp) {
+        this.timeStamp = timeStamp;
     }
 }

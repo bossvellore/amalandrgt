@@ -53,7 +53,7 @@ public class MessageItemAdapter extends BaseAdapter {
             messageDateTextView.setBackgroundColor(view.getResources().getColor(R.color.colorIncomingMessage));
         }
         displayNameTextView.setText(message.getMsgText());
-        long timeStamp = Long.valueOf(message.getTimestamp().toString());
+        long timeStamp = Long.valueOf(message.getTimeStamp().toString());
         String date = DateHelper.dateFormat.format(timeStamp);
         messageDateTextView.setText(date);
         return view;

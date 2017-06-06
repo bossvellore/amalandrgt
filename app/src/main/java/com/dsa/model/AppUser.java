@@ -5,6 +5,7 @@ package com.dsa.model;
  */
 
 public class AppUser {
+    public static final String REFERENCE="users";
     private String uid;
     private String name;
     private String displayName;

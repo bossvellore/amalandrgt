@@ -3,6 +3,7 @@ package com.dsa.firebasedl;
 import com.dsa.model.AppContact;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -26,7 +27,7 @@ public class ContactsRDB {
         fbAuth=FirebaseAuth.getInstance();
         currentUser=fbAuth.getCurrentUser();
         database = FirebaseDatabase.getInstance();
-        reference = database.getReference("contacts").child(currentUser.getUid());
+        reference = database.getReference(AppContact.REFERENCE).child(currentUser.getUid());
     }
 
     public DatabaseReference getReference() {
@@ -54,8 +55,16 @@ public class ContactsRDB {
      */
     public void saveOtherContact(AppContact myContact, String otherUid)
     {
-        DatabaseReference othersContactReference = database.getReference("contacts").child(otherUid);
+        DatabaseReference othersContactReference = database.getReference(AppContact.REFERENCE).child(otherUid);
         othersContactReference.child(myContact.getUid()).setValue(myContact);
 
+    }
+
+    public void setNewContactListener(ChildEventListener listener, String startTimeStamp)
+    {
+        if(startTimeStamp == null)
+            reference.addChildEventListener(listener);
+        else
+            reference.orderByChild(AppContact.REFERENCE).startAt(startTimeStamp).addChildEventListener(listener);
     }
 }

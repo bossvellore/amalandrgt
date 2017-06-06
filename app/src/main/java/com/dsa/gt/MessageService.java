@@ -1,6 +1,10 @@
 package com.dsa.gt;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
@@ -69,9 +73,12 @@ public class MessageService extends Service {
             }
         };
         if(lastMessage != null) {
+            if(lastMessage.getTimeStamp() != null)
             reference.orderByChild("timestamp")
-                    .startAt(Long.valueOf(lastMessage.getTimestamp().toString()) + 1)
+                    .startAt(Long.valueOf(lastMessage.getTimeStamp().toString()) + 1)
                     .addChildEventListener(messageChildEventListener);
+            else
+                reference.addChildEventListener(messageChildEventListener);
         }else{
             reference.addChildEventListener(messageChildEventListener);
         }
@@ -91,12 +98,38 @@ public class MessageService extends Service {
 
     private void notifyApp(AppMessage message)
     {
+        notifyApp(message.getMsgText());
         Intent intent = new Intent();
         intent.setAction(IntentAction.INCOMING_MESSAGE);
         intent.putExtra(IntentExtra.MSG_FROM_UID,message.getContactUid());
         intent.putExtra(IntentExtra.MSG_MAIL_BOX, MailBox.IN.toString());
         intent.putExtra(IntentExtra.MSG_TEXT, message.getMsgText());
-        intent.putExtra(IntentExtra.MSG_TIME_STAMP, message.getTimestamp().toString());
+        intent.putExtra(IntentExtra.MSG_TIME_STAMP, message.getTimeStamp().toString());
         localBroadcastManager.sendBroadcast(intent);
+    }
+
+    private void notifyApp(String notifString) {
+
+        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        int icon = R.drawable.common_full_open_on_phone;
+        Context context = getApplicationContext();
+        //Notification notification = new Notification(icon, "Firebase" + Math.random(), System.currentTimeMillis());
+
+        //		notification.flags |= Notification.FLAG_AUTO_CANCEL;
+
+        CharSequence contentTitle = "New Messages";
+        Intent notificationIntent = new Intent(context, ContactsActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
+        Notification notification= new Notification.Builder(context)
+                .setSmallIcon(icon)
+                .setTicker("New Message")
+                .setContentTitle(contentTitle)
+                .setContentText(notifString)
+                .setContentIntent(contentIntent)
+                .setWhen(System.currentTimeMillis())
+                .setAutoCancel(true)
+
+                .build();
+        mNotificationManager.notify(1, notification);
     }
 }

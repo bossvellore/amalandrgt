@@ -51,7 +51,7 @@ public class ChatManager extends BroadcastReceiver {
         String messageContact=message.getContactUid();
         // set the sender contact
         message.setContactUid(FirebaseAuth.getInstance().getCurrentUser().getUid());
-        message.setTimestamp(ServerValue.TIMESTAMP);
+        message.setTimeStamp(ServerValue.TIMESTAMP);
 
         //send is to firebase
         MessageRDB messageRDB=MessageRDB.getInstance();
@@ -60,7 +60,7 @@ public class ChatManager extends BroadcastReceiver {
         //stores it to local DB
         message.setMailBox(MailBox.OUT);
         //String date = DateHelper.dateFormat.format(Calendar.getInstance().getTime());
-        message.setTimestamp(DateHelper.getCurrentUnixTimeStamp());
+        message.setTimeStamp(DateHelper.getCurrentUnixTimeStamp());
         //set message contact
         message.setContactUid(messageContact);
         messageLDB.insert(message);
@@ -77,7 +77,7 @@ public class ChatManager extends BroadcastReceiver {
             message.setMsgText(intent.getStringExtra(IntentExtra.MSG_TEXT));
             message.setMailBox(MailBox.valueOf(intent.getStringExtra(IntentExtra.MSG_MAIL_BOX)));
             message.setContactUid(intent.getStringExtra(IntentExtra.MSG_FROM_UID));
-            message.setTimestamp(intent.getStringExtra(IntentExtra.MSG_TIME_STAMP));
+            message.setTimeStamp(intent.getStringExtra(IntentExtra.MSG_TIME_STAMP));
             messageList.add(message);
             chatListener.onChat();
         }

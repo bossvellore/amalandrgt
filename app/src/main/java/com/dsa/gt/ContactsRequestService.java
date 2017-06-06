@@ -20,7 +20,6 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class ContactsRequestService extends Service {
 
-    DatabaseReference reference= ContactsRDB.getInstance().getReference();
     ChildEventListener contactRequestChildEventListener;
     AppContacts appContacts;
     public ContactsRequestService() {
@@ -40,7 +39,8 @@ public class ContactsRequestService extends Service {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 AppContact otherContact=dataSnapshot.getValue(AppContact.class);
                 appContacts.receiveContactRequest(otherContact);
-                postNotif(otherContact.getDisplayName());
+                if(!appContacts.exists(otherContact.getUid()))
+                    notifyApp(otherContact.getDisplayName());
             }
 
             @Override
@@ -63,16 +63,17 @@ public class ContactsRequestService extends Service {
 
             }
         };
-        reference.addChildEventListener(contactRequestChildEventListener);
+        appContacts.setNewContactRequestListener(contactRequestChildEventListener);
     }
 
-    private void postNotif(String notifString) {
+    private void notifyApp(String notifString) {
+
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         int icon = R.drawable.common_full_open_on_phone;
         Context context = getApplicationContext();
         //Notification notification = new Notification(icon, "Firebase" + Math.random(), System.currentTimeMillis());
 
-//		notification.flags |= Notification.FLAG_AUTO_CANCEL;
+        //		notification.flags |= Notification.FLAG_AUTO_CANCEL;
 
         CharSequence contentTitle = "Contact Request" + Math.random();
         Intent notificationIntent = new Intent(context, ContactsActivity.class);
@@ -84,6 +85,8 @@ public class ContactsRequestService extends Service {
                 .setContentText(notifString)
                 .setContentIntent(contentIntent)
                 .setWhen(System.currentTimeMillis())
+                .setAutoCancel(true)
+
                 .build();
         mNotificationManager.notify(1, notification);
     }

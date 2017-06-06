@@ -8,6 +8,7 @@ import com.dsa.localdl.ContactsLDB;
 import com.dsa.model.AppContact;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
@@ -41,7 +42,7 @@ public class AppContacts {
     }
 
     public List<AppContact> getMyContacts() {
-        return myContacts=contactsLDB.all();
+        return contactsLDB.all();
     }
 
     public List<AppContact> getContactsSearchResults() {
@@ -50,7 +51,7 @@ public class AppContacts {
 
     public void search(String searchText)
     {
-        Query searchQuery=userRDB.getReference().orderByChild("displayName").startAt(searchText).limitToFirst(50);
+        Query searchQuery=userRDB.getReference().orderByChild(AppContact.CHILD_DISPLAY_NAME).startAt(searchText).limitToFirst(50);
         searchQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -75,13 +76,9 @@ public class AppContacts {
      */
     public void sendContactRequest(AppContact otherContact)
     {
-        AppContact myContact;
         ContactsRDB contactsRDB=ContactsRDB.getInstance();
-        otherContact.setMyStatus(AppContactStatus.ACCEPTED);
-        otherContact.setOtherStatus(AppContactStatus.PENDING);
-        contactsRDB.save(otherContact);
+        AppContact myContact=new AppContact();
 
-        myContact=new AppContact();
         FirebaseUser me= FirebaseAuth.getInstance().getCurrentUser();
         myContact.setUid(me.getUid());
         myContact.setDisplayName(me.getDisplayName());
@@ -90,8 +87,10 @@ public class AppContacts {
         myContact.setOtherStatus(AppContactStatus.ACCEPTED);
         contactsRDB.saveOtherContact(myContact, otherContact.getUid());
 
+        otherContact.setMyStatus(AppContactStatus.ACCEPTED);
+        otherContact.setOtherStatus(AppContactStatus.PENDING);
         contactsLDB.insert(otherContact);
-
+        contactsRDB.save(otherContact);
     }
 
     /**
@@ -99,6 +98,26 @@ public class AppContacts {
      */
     public void receiveContactRequest(AppContact otherContact)
     {
-        contactsLDB.insert(otherContact);
+        if(!contactsLDB.exists(otherContact.getUid())) {
+            contactsLDB.insert(otherContact);
+        }
+    }
+
+    public boolean exists(String uid)
+    {
+        return contactsLDB.exists(uid);
+    }
+
+    /**
+     * Set new contact request listener
+     */
+    public void setNewContactRequestListener(ChildEventListener listener)
+    {
+        AppContact contact=contactsLDB.getLastContact();
+        String startTimeStamp=null;
+        if(contact != null)
+            if(contact.getTimeStamp()!=null)
+                startTimeStamp=contact.getTimeStamp().toString();
+        ContactsRDB.getInstance().setNewContactListener(listener, startTimeStamp);
     }
 }

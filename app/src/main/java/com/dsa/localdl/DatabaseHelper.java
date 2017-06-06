@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 
 public class DatabaseHelper extends SQLiteOpenHelper {
-    public static final int DATABASE_VERSION = 3;
+    public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "gt.db";
 
     private static final String SQL_CREATE_ENTRIES =
@@ -19,7 +19,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     AppDatabaseContract.ContactsTable.COL_DISPLAY_NAME + " TEXT," +
                     AppDatabaseContract.ContactsTable.COL_PHOTO_URL + " TEXT," +
                     AppDatabaseContract.ContactsTable.COL_MY_STATUS + " TEXT," +
-                    AppDatabaseContract.ContactsTable.COL_OTHER_STATUS +" TEXT);";
+                    AppDatabaseContract.ContactsTable.COL_OTHER_STATUS +" TEXT,"+
+                    AppDatabaseContract.ContactsTable.COL_TIME_STAMP +" TEXT);";
 
     private static final String SQL_CREATE_MESSAGES =
             "CREATE TABLE " + AppDatabaseContract.MessageTable.TABLE_NAME + " (" +

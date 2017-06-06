@@ -20,7 +20,7 @@ public class UserRDB {
     private UserRDB()
     {
         database = FirebaseDatabase.getInstance();
-        reference = database.getReference("users");
+        reference = database.getReference(AppUser.REFERENCE);
     }
 
     public static UserRDB getInstance()

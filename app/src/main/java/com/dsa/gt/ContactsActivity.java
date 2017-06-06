@@ -19,6 +19,8 @@ import java.util.List;
 
 public class ContactsActivity extends AppCompatActivity {
 
+    AppContacts appContacts;
+    ContactsItemAdapter contactsItemAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,8 +37,8 @@ public class ContactsActivity extends AppCompatActivity {
             }
         });
 
-        final AppContacts appContacts=new AppContacts(this);
-        ContactsItemAdapter contactsItemAdapter=new ContactsItemAdapter(this, appContacts.getMyContacts());
+        appContacts=new AppContacts(this);
+        contactsItemAdapter=new ContactsItemAdapter(this, appContacts.getMyContacts());
         ListView contactsListView = (ListView)findViewById(R.id.contactsListView);
         contactsListView.setAdapter(contactsItemAdapter);
 
@@ -54,4 +56,10 @@ public class ContactsActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        contactsItemAdapter.setItems(appContacts.getMyContacts());
+        contactsItemAdapter.notifyDataSetChanged();
+    }
 }

@@ -7,11 +7,24 @@ import com.dsa.contacts.AppContactStatus;
  */
 
 public class AppContact {
+    public static final String REFERENCE="contacts";
+    public static final String CHILD_DISPLAY_NAME="displayName";
+    public static final String CHILD_TIME_STAMP="timeStamp";
+
     private String uid;
     private String displayName;
     private String photoUrl;
     private AppContactStatus myStatus;
     private AppContactStatus otherStatus;
+    private Object timeStamp;
+
+    public Object getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(Object timeStamp) {
+        this.timeStamp = timeStamp;
+    }
 
     public String getUid() {
         return uid;

@@ -23,6 +23,11 @@ public class ContactsItemAdapter extends BaseAdapter {
         this.activity=activity;
         this.items=items;
     }
+
+    public void setItems(List<AppContact> items) {
+        this.items = items;
+    }
+
     @Override
     public int getCount() {
         return items.size();

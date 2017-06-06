@@ -28,7 +28,7 @@ public class MessageRDB {
         fbAuth=FirebaseAuth.getInstance();
         currentUser=fbAuth.getCurrentUser();
         database = FirebaseDatabase.getInstance();
-        reference = database.getReference("messages");
+        reference = database.getReference(AppMessage.REFERENCE);
     }
 
     public DatabaseReference getReference() {
