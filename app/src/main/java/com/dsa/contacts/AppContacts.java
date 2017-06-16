@@ -2,16 +2,21 @@ package com.dsa.contacts;
 
 import android.content.Context;
 
+import com.dsa.chat.ChatManager;
+import com.dsa.chat.MessageType;
 import com.dsa.firebasedl.ContactsRDB;
 import com.dsa.firebasedl.UserRDB;
+import com.dsa.gt.DateHelper;
 import com.dsa.localdl.ContactsLDB;
 import com.dsa.model.AppContact;
+import com.dsa.model.AppMessage;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -85,12 +90,21 @@ public class AppContacts {
         myContact.setPhotoUrl(me.getPhotoUrl().toString());
         myContact.setMyStatus(AppContactStatus.PENDING);
         myContact.setOtherStatus(AppContactStatus.ACCEPTED);
+        myContact.setTimeStamp(ServerValue.TIMESTAMP);
         contactsRDB.saveOtherContact(myContact, otherContact.getUid());
 
         otherContact.setMyStatus(AppContactStatus.ACCEPTED);
         otherContact.setOtherStatus(AppContactStatus.PENDING);
+        otherContact.setTimeStamp(DateHelper.getCurrentUnixTimeStamp());
         contactsLDB.insert(otherContact);
         contactsRDB.save(otherContact);
+
+        //Notify the other contact
+        ChatManager chatManager=new ChatManager(context, otherContact.getUid());
+        AppMessage contactRequestMessage=new AppMessage();
+        contactRequestMessage.setMessageType(MessageType.CONTACT_REQUEST);
+        contactRequestMessage.setMessage(myContact);
+        chatManager.send(contactRequestMessage);
     }
 
     /**

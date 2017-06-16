@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.dsa.model.AppContact;
@@ -47,6 +48,7 @@ public class ContactsSearchItemAdapter extends BaseAdapter {
         AppContact appContact=items.get(position);
         TextView displayNameTextView = (TextView)view.findViewById(R.id.displayNameTextView);
         displayNameTextView.setText(appContact.getDisplayName());
+
         return view;
     }
 }

@@ -10,6 +10,7 @@ import android.widget.ListView;
 import com.dsa.chat.ChatListener;
 import com.dsa.chat.ChatManager;
 import com.dsa.chat.MailBox;
+import com.dsa.chat.MessageType;
 import com.dsa.model.AppMessage;
 
 import java.text.SimpleDateFormat;
@@ -37,7 +38,7 @@ public class MessageActivity extends AppCompatActivity implements ChatListener {
         contactUid = bundle.getString(IntentExtra.MSG_TO_UID);
         contactName = bundle.getString(IntentExtra.MSG_TO_NAME);
         setTitle(contactName);
-        chatType = bundle.getString(IntentExtra.MSG_TYPE);
+        chatType = bundle.getString(IntentExtra.MSG_CHAT_TYPE);
         chatManager=new ChatManager(this, contactUid);
         chatManager.setChatListener(this);
 
@@ -50,10 +51,8 @@ public class MessageActivity extends AppCompatActivity implements ChatListener {
             @Override
             public void onClick(View v) {
                 AppMessage message=new AppMessage();
-                message.setContactUid(contactUid);
-
+                message.setMessageType(MessageType.TEXT_CHAT);
                 message.setMsgText(messageEditTxt.getText().toString());
-
                 chatManager.send(message);
             }
         });

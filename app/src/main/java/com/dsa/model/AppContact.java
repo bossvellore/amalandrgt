@@ -2,6 +2,8 @@ package com.dsa.model;
 
 import com.dsa.contacts.AppContactStatus;
 
+import java.util.Map;
+
 /**
  * Created by amalroshand on 01/06/17.
  */
@@ -17,6 +19,16 @@ public class AppContact {
     private AppContactStatus myStatus;
     private AppContactStatus otherStatus;
     private Object timeStamp;
+
+    public AppContact(){}
+
+    public AppContact(Map<String, String> contactMap){
+        this.uid = contactMap.get("uid");
+        this.displayName = contactMap.get("displayName");
+        this.photoUrl = contactMap.get("photoUrl");
+        this.myStatus = AppContactStatus.valueOf(contactMap.get("myStatus"));
+        this.otherStatus = AppContactStatus.valueOf(contactMap.get("otherStatus"));
+    }
 
     public Object getTimeStamp() {
         return timeStamp;

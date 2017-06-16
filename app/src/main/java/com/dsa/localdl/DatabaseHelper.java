@@ -24,10 +24,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String SQL_CREATE_MESSAGES =
             "CREATE TABLE " + AppDatabaseContract.MessageTable.TABLE_NAME + " (" +
+                    AppDatabaseContract.MessageTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    AppDatabaseContract.MessageTable.COL_SENDER_MESSAGE_ID + " INTEGER," +
                     AppDatabaseContract.MessageTable.COL_KEY + " TEXT NULL," +
                     AppDatabaseContract.MessageTable.COL_CONTACT_UID + " TEXT," +
+                    AppDatabaseContract.MessageTable.COL_CONTACT_DISPLAY_NAME + " TEXT," +
                     AppDatabaseContract.MessageTable.COL_MAIL_BOX + " TEXT," +
                     AppDatabaseContract.MessageTable.COL_MSG_TEXT + " TEXT," +
+                    AppDatabaseContract.MessageTable.COL_MSG_TYPE + " TEXT," +
                     AppDatabaseContract.MessageTable.COL_TIME_STAMP + " TEXT);";
 
     public DatabaseHelper(Context context)

@@ -22,11 +22,14 @@ public final class AppDatabaseContract {
 
     public static class MessageTable implements BaseColumns{
         public static final String TABLE_NAME = "messages";
+        public static final String COL_SENDER_MESSAGE_ID="senderMsgId";
         public static final String COL_KEY = "key";
         public static final String COL_MSG_TEXT = "msgText";
         public static final String COL_CONTACT_UID = "contactUid";
+        public static final String COL_CONTACT_DISPLAY_NAME = "contactDisplayName";
         public static final String COL_MAIL_BOX = "mailBox";
         public static final String COL_TIME_STAMP = "timeStamp";
+        public static final String COL_MSG_TYPE = "msgType";
     }
     private void test(){
 

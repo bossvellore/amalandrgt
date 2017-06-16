@@ -22,18 +22,20 @@ public class MessageLDB extends DatabaseHelper{
         super(context);
     }
 
-    public void insert(AppMessage message)
+    public long insert(AppMessage message)
     {
         SQLiteDatabase db = this.getWritableDatabase();
         // Create a new map of values, where column names are the keys
         ContentValues values = new ContentValues();
+        values.put(AppDatabaseContract.MessageTable.COL_SENDER_MESSAGE_ID, message.getSenderMsgId());
         values.put(AppDatabaseContract.MessageTable.COL_KEY, message.getKey());
         values.put(AppDatabaseContract.MessageTable.COL_CONTACT_UID, message.getContactUid());
         values.put(AppDatabaseContract.MessageTable.COL_MAIL_BOX, message.getMailBox().toString());
-        values.put(AppDatabaseContract.MessageTable.COL_MSG_TEXT, message.getMsgText().toString());
+        values.put(AppDatabaseContract.MessageTable.COL_MSG_TEXT, message.getMsgText());
         values.put(AppDatabaseContract.MessageTable.COL_TIME_STAMP, message.getTimeStamp().toString());
+        values.put(AppDatabaseContract.MessageTable.COL_MSG_TYPE, message.getMessageType().toString());
         // Insert the new row, returning the primary key value of the new row
-        db.insert(AppDatabaseContract.MessageTable.TABLE_NAME, null, values);
+        return db.insert(AppDatabaseContract.MessageTable.TABLE_NAME, null, values);
     }
 
     public void update(AppMessage message)
@@ -51,14 +53,16 @@ public class MessageLDB extends DatabaseHelper{
                 AppDatabaseContract.MessageTable.COL_KEY+"=?", new String[]{message.getKey()});
     }
 
-    public boolean exists(String key)
+    public boolean exists(String senderLocalMsgId, String contactUid)
     {
         String[] columns=new String[]{
                 AppDatabaseContract.MessageTable.COL_KEY
         };
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(AppDatabaseContract.MessageTable.TABLE_NAME,columns,
-                AppDatabaseContract.MessageTable.COL_KEY + "=?", new String[]{key}, null, null, null );
+                AppDatabaseContract.MessageTable.COL_SENDER_MESSAGE_ID + "=? AND " +
+                        AppDatabaseContract.MessageTable.COL_CONTACT_UID + "=? ",
+                new String[]{senderLocalMsgId, contactUid}, null, null, null );
         if(cursor.getCount()>0){
             return true;
         }
@@ -77,7 +81,9 @@ public class MessageLDB extends DatabaseHelper{
                 AppDatabaseContract.MessageTable.COL_TIME_STAMP
         };
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(AppDatabaseContract.MessageTable.TABLE_NAME,columns,null,null,null,null, AppDatabaseContract.MessageTable.COL_TIME_STAMP + " DESC","1");
+        Cursor cursor = db.query(AppDatabaseContract.MessageTable.TABLE_NAME,columns,
+                AppDatabaseContract.MessageTable.COL_MAIL_BOX + "=?",
+                new String[]{MailBox.IN.toString()},null,null, AppDatabaseContract.MessageTable.COL_TIME_STAMP + " DESC","1");
         if(cursor.moveToFirst()) {
             return readCursor(cursor);
         }else{

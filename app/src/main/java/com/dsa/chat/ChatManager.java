@@ -45,41 +45,79 @@ public class ChatManager extends BroadcastReceiver {
         IntentFilter messageIntentFilter = new IntentFilter(IntentAction.INCOMING_MESSAGE);
         localBroadcastManager.registerReceiver(this, messageIntentFilter);
     }
+
+    private void fireOnChatEvent()
+    {
+        if(chatListener!=null)
+            chatListener.onChat();
+    }
+
+    public long saveToLocalDB(AppMessage message)
+    {
+        long insertId=0;
+        message.setContactUid(contactUid);
+        message.setMailBox(MailBox.OUT);
+        message.setTimeStamp(DateHelper.getCurrentUnixTimeStamp());
+        switch (message.getMessageType())
+        {
+            case CONTACT_REQUEST:
+                insertId = messageLDB.insert(message);
+                this.messageList.add(message);
+                fireOnChatEvent();
+                break;
+            case TEXT_CHAT:
+                insertId = messageLDB.insert(message);
+                this.messageList.add(message);
+                fireOnChatEvent();
+                break;
+        }
+        return insertId;
+    }
+
+
     public void send(AppMessage message)
     {
-        // getting delivery contact
-        String messageContact=message.getContactUid();
+        long _ID=saveToLocalDB(message);
+
+        AppMessage _message=new AppMessage(message);
+        _message.set_ID(_ID);
         // set the sender contact
-        message.setContactUid(FirebaseAuth.getInstance().getCurrentUser().getUid());
-        message.setTimeStamp(ServerValue.TIMESTAMP);
+        _message.setContactUid(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        _message.setTimeStamp(ServerValue.TIMESTAMP);
 
-        //send is to firebase
         MessageRDB messageRDB=MessageRDB.getInstance();
-        messageRDB.send(message, messageContact);
-
-        //stores it to local DB
-        message.setMailBox(MailBox.OUT);
-        //String date = DateHelper.dateFormat.format(Calendar.getInstance().getTime());
-        message.setTimeStamp(DateHelper.getCurrentUnixTimeStamp());
-        //set message contact
-        message.setContactUid(messageContact);
-        messageLDB.insert(message);
-
-        this.messageList.add(message);
-        this.chatListener.onChat();
+        switch (_message.getMessageType())
+        {
+            case CONTACT_REQUEST:
+                messageRDB.send(_message, contactUid);
+                break;
+            case TEXT_CHAT:
+                messageRDB.send(_message, contactUid);
+                break;
+        }
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
         String contact = intent.getStringExtra(IntentExtra.MSG_FROM_UID);
         if(this.contactUid.equals(intent.getStringExtra(IntentExtra.MSG_FROM_UID) ) ){
-            AppMessage message = new AppMessage();
-            message.setMsgText(intent.getStringExtra(IntentExtra.MSG_TEXT));
-            message.setMailBox(MailBox.valueOf(intent.getStringExtra(IntentExtra.MSG_MAIL_BOX)));
-            message.setContactUid(intent.getStringExtra(IntentExtra.MSG_FROM_UID));
-            message.setTimeStamp(intent.getStringExtra(IntentExtra.MSG_TIME_STAMP));
-            messageList.add(message);
-            chatListener.onChat();
+
+            switch (MessageType.valueOf(intent.getStringExtra(IntentExtra.MSG_TYPE)))
+            {
+                case CONTACT_REQUEST:
+
+                    break;
+                case TEXT_CHAT:
+                    AppMessage message = new AppMessage();
+                    message.setMsgText(intent.getStringExtra(IntentExtra.MSG_TEXT));
+                    message.setMailBox(MailBox.valueOf(intent.getStringExtra(IntentExtra.MSG_MAIL_BOX)));
+                    message.setContactUid(intent.getStringExtra(IntentExtra.MSG_FROM_UID));
+                    message.setTimeStamp(intent.getStringExtra(IntentExtra.MSG_TIME_STAMP));
+                    messageList.add(message);
+                    fireOnChatEvent();
+                    break;
+            }
+
         }
     }
 

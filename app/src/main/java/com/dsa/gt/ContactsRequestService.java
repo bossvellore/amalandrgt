@@ -38,8 +38,11 @@ public class ContactsRequestService extends Service {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 AppContact otherContact=dataSnapshot.getValue(AppContact.class);
-                appContacts.receiveContactRequest(otherContact);
+                boolean notify=false;
                 if(!appContacts.exists(otherContact.getUid()))
+                    notify=true;
+                appContacts.receiveContactRequest(otherContact);
+                if(notify)
                     notifyApp(otherContact.getDisplayName());
             }
 

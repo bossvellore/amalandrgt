@@ -11,6 +11,7 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import com.dsa.chat.ChatManager;
 import com.dsa.chat.MailBox;
+import com.dsa.chat.MessageReceiver;
 import com.dsa.contacts.AppContacts;
 import com.dsa.firebasedl.ContactsRDB;
 import com.dsa.firebasedl.MessageRDB;
@@ -30,6 +31,7 @@ public class MessageService extends Service {
     AppMessage message;
     LocalBroadcastManager localBroadcastManager;
     MessageLDB messageLDB;
+    MessageReceiver messageReceiver;
     public MessageService() {
     }
 
@@ -44,6 +46,7 @@ public class MessageService extends Service {
         localBroadcastManager=LocalBroadcastManager.getInstance(getApplicationContext());
         messageLDB=new MessageLDB(getApplicationContext());
         AppMessage lastMessage=messageLDB.getLastMessage();
+        messageReceiver = new MessageReceiver(getApplicationContext());
         messageChildEventListener=new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -74,7 +77,7 @@ public class MessageService extends Service {
         };
         if(lastMessage != null) {
             if(lastMessage.getTimeStamp() != null)
-            reference.orderByChild("timestamp")
+            reference.orderByChild(AppMessage.CHILD_TIME_STAMP)
                     .startAt(Long.valueOf(lastMessage.getTimeStamp().toString()) + 1)
                     .addChildEventListener(messageChildEventListener);
             else
@@ -87,13 +90,9 @@ public class MessageService extends Service {
     private void saveToLocalDB(AppMessage message)
     {
         message.setMailBox(MailBox.IN);
-        if(!messageLDB.exists(message.getKey())) {
-            messageLDB.insert(message);
-            MessageRDB.getInstance().delete(message.getKey());
-            notifyApp(message);
-        }else{
-            MessageRDB.getInstance().delete(message.getKey());
-        }
+        message.setSenderMsgId(message.get_ID());
+        messageReceiver.receiveMessage(message);
+        notifyApp(message);
     }
 
     private void notifyApp(AppMessage message)
@@ -104,6 +103,7 @@ public class MessageService extends Service {
         intent.putExtra(IntentExtra.MSG_FROM_UID,message.getContactUid());
         intent.putExtra(IntentExtra.MSG_MAIL_BOX, MailBox.IN.toString());
         intent.putExtra(IntentExtra.MSG_TEXT, message.getMsgText());
+        intent.putExtra(IntentExtra.MSG_TYPE, message.getMessageType().toString());
         intent.putExtra(IntentExtra.MSG_TIME_STAMP, message.getTimeStamp().toString());
         localBroadcastManager.sendBroadcast(intent);
     }
